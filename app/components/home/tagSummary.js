@@ -1,31 +1,32 @@
 import React, { PropTypes } from 'react';
 
 
-const TagSummary = ({ tags, highlightTag, clearHighlight }) => {
-    if (!tags) {
+const TagSummary = ({ tags, setHighlightTag, clearHighlight }) => {
+    if (Object.getOwnPropertyNames(tags).length === 0) {
         return <div />;
+    } else {
+        return (
+            <div id="tag-buttons">
+                {Object.keys(tags).map((tag) => {
+                    return (
+                        <div key={ tag }>
+                            <button type="button" onClick={ setHighlightTag.bind(this, tag) }>
+                                <pre>&lt;{ tag }&gt;</pre>
+                            </button>
+                            <span>{ tags[tag] }</span>
+                        </div>
+                    );
+                })}
+                <button onClick={ clearHighlight }>Clear</button>
+            </div>
+        );
     }
-    return (
-        <div>
-            {Object.keys(tags).map((tag) => {
-                return (
-                    <div key={ tag }>
-                        <button type="button" onClick={ highlightTag.bind(this, tag) }>
-                            <pre>&lt;{ tag }&gt;</pre>
-                        </button>
-                        <p>{ tags[tag] }</p>
-                    </div>
 
-                );
-            })}
-            <button onClick={}>Clear</button>
-        </div>
-    );
 };
 
 TagSummary.propTypes = {
     tags: PropTypes.object,
-    highlightTag: PropTypes.func.isRequired,
+    setHighlightTag: PropTypes.func.isRequired,
     clearHighlight: PropTypes.func.isRequired
 };
 

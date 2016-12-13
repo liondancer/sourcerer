@@ -3,7 +3,7 @@ import TextField from 'material-ui/TextField'
 
 const UrlForm = ({ onSearch, onChange }) => {
     return (
-        <form>
+        <form id="urlform">
             <TextField
                 hintText="Ask the Sourcerer ..."
                 onChange={ onChange }

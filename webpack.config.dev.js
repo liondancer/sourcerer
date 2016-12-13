@@ -32,6 +32,7 @@ export default {
             // loaders --> use babel to transpile our code
             {test: /\.js$/, include: path.join(__dirname, 'app'), loaders: ['babel']},
             {test: /(\.css)$/, loaders: ['style', 'css']},
+
         ]
     }
 };

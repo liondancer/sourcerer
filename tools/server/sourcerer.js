@@ -19,7 +19,7 @@ export default class Sourcerer {
 
     analyzeSourcePage() {
         return rp(this.options).then((res) => {
-            let tagData = {};
+            let tagData = {"html": 1};
             this.payload.UrlStatusCode = res.statusCode;
             console.log("Status code: " + this.payload.UrlStatusCode);
             if (this.payload.UrlStatusCode === 200) {
@@ -27,7 +27,12 @@ export default class Sourcerer {
                 this.beautifyPageSource(pageSource);
                 let $ = cheerio.load(pageSource);
                 $('*').contents().each((index, element) => {
-                    if (element["type"] === "tag") {
+                    if (element["type"] === "tag" || element["type"] === "style") {
+                        // console.log(element);
+                        if (element["na,e"] === "html") {
+                            console.log("HTML here");
+                        }
+
                         const tagName = element["name"];
                         if (tagName in tagData) {
                             tagData[tagName]++;

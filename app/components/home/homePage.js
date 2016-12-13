@@ -5,20 +5,46 @@ import TagSummary from './tagSummary';
 import PrettyPrintPageSource from './prettyPrintPageSource';
 import { bindActionCreators } from 'redux';
 import * as GetPageSourceActions from '../../actions/getPageSourceAction';
+import DisplayChart from './displayChart'
 
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url: "",
-            highlight: null
+            highlight: null,
+            url: null
         };
         this.getPageSource = this.getPageSource.bind(this);
         this.updateURLstate = this.updateURLstate.bind(this);
-        this.highlightTag = this.highlightTag.bind(this);
-        this.clearHighlight = this.clearHighlight(this);
-
+        this.clearHighlight = this.clearHighlight.bind(this);
+        this.setHighlightTag = this.setHighlightTag.bind(this);
     }
+
+    // isNewTags(tags) {
+    //     if (Object.getOwnPropertyNames(tags).length > 0) {
+    //         let newTags = Object.getOwnPropertyNames(tags);
+    //         let stateTags = Object.getOwnPropertyNames(this.state.tags);
+    //
+    //         // compare length
+    //         if (newTags.length != stateTags.length) {
+    //             return false;
+    //         }
+    //
+    //         for (let i = 0; i < newTags.length; i++) {
+    //             let propName = newTags[i];
+    //
+    //             // compare values of object
+    //             if (newTags[propName] !== stateTags[propName]) {
+    //                 return false;
+    //             }
+    //         }
+    //         this.setState({
+    //             tags
+    //         });
+    //         return true;
+    //     }
+    // }
+
 
     getPageSource(event) {
         event.preventDefault();
@@ -32,7 +58,7 @@ class HomePage extends React.Component {
         });
     }
 
-    highlightTag(tag) {
+    setHighlightTag(tag) {
         this.setState({
             highlight: tag
         });
@@ -44,25 +70,71 @@ class HomePage extends React.Component {
         });
     }
 
-    render() {
-        console.log(this.props.payload);
-        return (
-            <div>
-                <UrlForm
-                    onSearch={ this.getPageSource }
-                    onChange={ this.updateURLstate }
-                />
 
-                <PrettyPrintPageSource
-                    badUrl={ this.props.payload.error }
-                    prettyPrintPageSource={ this.props.payload.prettySource }
-                    higlighted={ this.state.highlight }
-                />
-                <TagSummary
-                    tags={ this.props.payload.tagData }
-                    highlightTag={ this.highlightTag }
-                    clearHighlight={ this.clearHighlight }
-                />
+    highlightTag(pageSource, tag) {
+        if (tag && pageSource) {
+            // let re = new RegExp("<(\/)?" + tag + "(.*)?>", "g");
+            // let re = new RegExp("\s*<(\/){0,1}" + tag + "[^>]*>", "g");
+            let re = new RegExp("\s*<[^>]*" + tag + "[^>]*>[\s]*", "g");
+            let matchingHTMLChunks = pageSource.match(re);
+            let htmlChunks = pageSource.split(re);
+            let pageSourceArray = [];
+            let htmlChunkFlag = 0;
+            let len = htmlChunks.length + matchingHTMLChunks.length;
+            for (let i = 0; i < len; i++) {
+                if (htmlChunkFlag) {
+                    pageSourceArray.push(matchingHTMLChunks.shift());
+                    htmlChunkFlag = 0;
+                } else {
+                    pageSourceArray.push(htmlChunks.shift());
+                    htmlChunkFlag = 1;
+                }
+            }
+
+            return pageSourceArray;
+        } else if (pageSource && !tag) {
+            return [pageSource];
+        } else {
+            return [];
+        }
+    }
+
+    render() {
+        // console.log(this.props.payload);
+        // console.log(this.state);
+        return (
+            <div id="content-wrapper">
+                <div id="search">
+                    <img id="logo"/>
+                    <UrlForm
+                        onSearch={ this.getPageSource }
+                        onChange={ this.updateURLstate }
+                    />
+                </div>
+                <div id="sourcerer-content">
+                    <div className="left-content ">
+                        <PrettyPrintPageSource
+                            badUrl={ this.props.payload.error }
+                            prettyPrintPageSource={ this.props.payload.prettySource }
+                            highlighter={ this.highlightTag }
+                            tag={ this.state.highlight }
+                        />
+                    </div>
+                    <div className="right-content">
+                        <div id="chart">
+                            <DisplayChart
+                                tags={ this.props.payload.tagData }
+                            />
+                        </div>
+                        <div id="tags">
+                            <TagSummary
+                                tags={ this.props.payload.tagData }
+                                setHighlightTag={ this.setHighlightTag }
+                                clearHighlight={ this.clearHighlight }
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

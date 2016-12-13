@@ -11,11 +11,10 @@ import './styles/styles.css'; // Webpack can import CSS files too!
 import configureStore from "./store/configureStore";
 import { Provider } from 'react-redux';
 
-//
 const store = configureStore();
 
 render(
-    // Provider attaches my app to the redux  store
+    // Provider attaches my app to the redux store
     <Provider store={ store }>
         <Router history={ browserHistory } routes={ routes } />
     </Provider>,

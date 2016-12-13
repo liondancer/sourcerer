@@ -1,0 +1,39 @@
+pre {
+    margin: 0;
+}
+
+#content-wrapper {
+    position: relative;
+}
+
+#sourcerer-content {
+    display: flex;
+}
+
+.left-content {
+    /* hide scroll side */
+    overflow: hidden;
+    word-wrap: break-word;
+    width: 50%;
+    float: left;
+}
+
+.left-content:hover {
+    /* On hover, display scroll  */
+    overflow: auto;
+}
+
+.right-content {
+    width: 50%;
+    float: right;
+    position: relative;
+}
+
+#tag-buttons {
+    display: flex;
+}
+
+
+#page-source {
+    word-wrap: break-word;
+}
